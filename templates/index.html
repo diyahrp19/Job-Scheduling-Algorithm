@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Scheduling Algorithm</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Job Scheduling Algorithm</h1>
+    <!-- Job input form -->
+     {% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+    <form method="POST">
+        <div id="job-fields">
+    {% if jobs_entered %}
+        {% for job in jobs_entered %}
+        <div class="job-row">
+            <div class="input-group">
+                <label>Job ID</label>
+                <input type="text" name="job_id" value="{{ job.id }}" required>
+            </div>
+            <div class="input-group">
+                <label>Deadline</label>
+                <input type="number" name="deadline" value="{{ job.deadline }}" required>
+            </div>
+            <div class="input-group">
+                <label>Profit</label>
+                <input type="number" name="profit" value="{{ job.profit }}" required>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <!-- Default empty row -->
+        <div class="job-row">
+            <div class="input-group">
+                <label>Job ID</label>
+                <input type="text" name="job_id" required>
+            </div>
+            <div class="input-group">
+                <label>Deadline</label>
+                <input type="number" name="deadline" required>
+            </div>
+            <div class="input-group">
+                <label>Profit</label>
+                <input type="number" name="profit" required>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+        <div class="button-group">
+            <button type="button" onclick="addJob()">Add Another Job</button>
+            <button type="submit">Schedule Jobs</button>
+        </div>
+    </form>
+
+    <!-- Show results only after POST -->
+<div id="results-section">
+{% if jobs_entered %}
+    <h2>All Entered Jobs</h2>
+    <table>
+        <tr><th>Job ID</th><th>Deadline</th><th>Profit</th></tr>
+        {% for job in jobs_entered %}
+        <tr>
+            <td>{{ job.id }}</td>
+            <td>{{ job.deadline }}</td>
+            <td>{{ job.profit }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Scheduled Jobs</h2>
+    <table>
+        <tr><th>Job ID</th><th>Deadline</th><th>Profit</th></tr>
+        {% for job in scheduled_jobs %}
+        <tr>
+            <td>{{ job.id }}</td>
+            <td>{{ job.deadline }}</td>
+            <td>{{ job.profit }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Selected Jobs = ({{ selection | join(', ') }})</h3>
+    <h3>Total Profit: {{ total_profit }}</h3>
+{% endif %}
+</div>
+
+<script>
+function addJob() {
+    const jobFields = document.getElementById('job-fields');
+    const newJob = document.createElement('div');
+    newJob.classList.add('job-row');
+    newJob.innerHTML = `
+        <div class="input-group">
+            <label>Job ID</label>
+            <input type="text" name="job_id" required>
+        </div>
+        <div class="input-group">
+            <label>Deadline</label>
+            <input type="number" name="deadline" required>
+        </div>
+        <div class="input-group">
+            <label>Profit</label>
+            <input type="number" name="profit" required>
+        </div>
+    `;
+    jobFields.appendChild(newJob);
+}
+
+// 🔥 Clear form completely on page reload
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || performance.getEntriesByType("navigation")[0].type === "reload") {
+
+        // Clear form
+        const jobFields = document.getElementById("job-fields");
+        jobFields.innerHTML = `
+            <div class="job-row">
+                <div class="input-group">
+                    <label>Job ID</label>
+                    <input type="text" name="job_id" required>
+                </div>
+                <div class="input-group">
+                    <label>Deadline</label>
+                    <input type="number" name="deadline" required>
+                </div>
+                <div class="input-group">
+                    <label>Profit</label>
+                    <input type="number" name="profit" required>
+                </div>
+            </div>
+        `;
+
+        // 🔥 REMOVE OLD RESULTS
+        const results = document.getElementById("results-section");
+        if (results) {
+            results.remove();
+        }
+    }
+});
+</script>
+
+</body>
+</html>
