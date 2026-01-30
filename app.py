@@ -64,7 +64,7 @@ def index():
             total_profit=total_profit
         )
 
-    return render_template('index.html')
+    return render_template('index.html', error=None)
 
 if __name__ == '__main__':
     app.run(debug=True)
